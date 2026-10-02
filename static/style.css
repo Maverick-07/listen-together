@@ -122,6 +122,8 @@ input[type=range] { accent-color: var(--accent); }
   display: grid;
   height: 100vh;
   height: 100dvh;
+  /* Set from JS (visualViewport) so the layout shrinks above the phone keyboard. */
+  height: var(--app-h, 100dvh);
   gap: var(--gap);
   padding: var(--gap);
   padding-left: max(var(--gap), env(safe-area-inset-left));
@@ -245,6 +247,7 @@ header.top .spacer { flex: 1; }
 .controls #seek { flex: 1; min-width: 60px; }
 .controls .volume { flex: 0 0 90px; }
 #playBtn { width: 44px; height: 44px; border-radius: 50%; padding: 0; font-size: 18px; flex-shrink: 0; }
+#miniBtn { display: none; }
 
 .reaction-bar { display: flex; gap: 4px; flex-wrap: wrap; }
 .reaction-bar button { font-size: 20px; padding: 6px 8px; background: transparent; }
@@ -512,6 +515,47 @@ header.top .spacer { flex: 1; }
   .room:not([data-tab=chat]) .pane-chat { display: none; }
 
   .result { grid-template-columns: 96px minmax(0, 1fr) auto; gap: 8px; }
+
+  #miniBtn { display: inline-block; }
+
+  /* Slim chat header: one swipeable row of people. */
+  .chat-head { padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+  .chat-head .pane-title { margin: 0; white-space: nowrap; flex-shrink: 0; }
+  .users { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-height: none; }
+  .users::-webkit-scrollbar { display: none; }
+  .user-pill { white-space: nowrap; flex-shrink: 0; }
+  .messages { padding: 10px 12px; }
+
+  /* ---- Compact player: small video beside the controls ---- */
+  .room[data-mini=yes] .stage { flex-direction: row; align-items: center; gap: 10px; }
+  .room[data-mini=yes] .player-wrap { width: 128px; flex: 0 0 128px; border-radius: 10px; }
+  .room[data-mini=yes] .now-playing {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    gap: 4px;
+  }
+  .room[data-mini=yes] .np-title { font-size: 14px; }
+  .room[data-mini=yes] .np-sub,
+  .room[data-mini=yes] .controls .time { display: none; }
+  .room[data-mini=yes] .controls { gap: 2px; }
+  .room[data-mini=yes] #playBtn { width: 34px; height: 34px; min-height: 34px; font-size: 14px; }
+  .room[data-mini=yes] .controls button.icon { min-width: 32px; min-height: 32px; padding: 4px; font-size: 16px; }
+  .room[data-mini=yes] .reaction-bar button { font-size: 17px; padding: 2px 4px; min-height: 30px; }
+  .room[data-mini=yes] .empty-player { padding: 4px; }
+  .room[data-mini=yes] .empty-player .note { font-size: 28px; margin: 0; }
+  .room[data-mini=yes] .empty-player strong,
+  .room[data-mini=yes] .empty-player .muted { display: none; }
+  .room[data-mini=yes] .unmute-banner button { font-size: 11px; padding: 4px 6px; min-height: 0; }
+  .room[data-mini=yes] .floating-emoji { font-size: 20px; }
+  .room[data-mini=yes] .floating-emoji span { display: none; }
+
+  /* ---- Keyboard open: give everything to the active pane ---- */
+  .room[data-kb=yes] { grid-template-rows: auto minmax(0, 1fr); grid-template-areas: "stage" "pane"; padding-top: 6px; padding-bottom: 6px; }
+  .room[data-kb=yes] header.top,
+  .room[data-kb=yes] .tabs,
+  .room[data-kb=yes] .reaction-bar,
+  .room[data-kb=yes] .chat-head { display: none; }
 }
 
 /* Very narrow phones */

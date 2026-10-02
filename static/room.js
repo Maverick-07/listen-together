@@ -326,7 +326,7 @@ function isPaneVisible(name) {
 function setTab(tab) {
   if (device() === 'tablet' && tab === 'queue') tab = 'chat';
   $('room').dataset.tab = tab;
-  for (const b of $('tabs').querySelectorAll('button')) {
+  for (const b of $('tabs').querySelectorAll('button[data-tab]')) {
     b.classList.toggle('active', b.dataset.tab === tab);
   }
   if (isPaneVisible('chat')) {
@@ -340,8 +340,48 @@ function onDeviceChange() {
   document.documentElement.dataset.device = device();
   document.documentElement.dataset.touch = mqTouch.matches ? 'yes' : 'no';
   setTab($('room').dataset.tab);
+  maxViewportH = 0;
+  fitViewport();
 }
-for (const mq of [mqPhone, mqTablet, mqTouch]) mq.addEventListener('change', onDeviceChange);
+
+// Compact player (phones): small video beside the controls, so chat/search get the room.
+// On by default; the user's choice is remembered.
+let miniPref = storageGet('lt-mini') !== 'no';
+let keyboardOpen = false;
+
+function updateMini() {
+  const mini = keyboardOpen || miniPref;
+  $('room').dataset.mini = mini ? 'yes' : 'no';
+  $('room').dataset.kb = keyboardOpen ? 'yes' : 'no';
+  $('miniBtn').textContent = mini ? '⤢' : '⤡';
+  $('miniBtn').title = mini ? 'Expand video' : 'Shrink video';
+}
+
+$('miniBtn').addEventListener('click', () => {
+  miniPref = !miniPref;
+  storageSet('lt-mini', miniPref ? 'yes' : 'no');
+  updateMini();
+});
+
+// Size the layout to the *visible* viewport so the on-screen keyboard doesn't
+// cover the chat box, and detect when the keyboard is open.
+let maxViewportH = 0;
+function fitViewport() {
+  const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  maxViewportH = Math.max(maxViewportH, h);
+  document.documentElement.style.setProperty('--app-h', `${Math.round(h)}px`);
+  const wasOpen = keyboardOpen;
+  keyboardOpen = device() === 'phone' && mqTouch.matches && h < maxViewportH * 0.75;
+  updateMini();
+  if (keyboardOpen) {
+    window.scrollTo(0, 0);
+    if (!wasOpen) $('messages').scrollTop = $('messages').scrollHeight;
+  }
+}
+if (window.visualViewport) window.visualViewport.addEventListener('resize', fitViewport);
+window.addEventListener('resize', fitViewport);
+const mqPortrait = matchMedia('(orientation: portrait)');
+for (const mq of [mqPhone, mqTablet, mqTouch, mqPortrait]) mq.addEventListener('change', onDeviceChange);
 
 $('tabs').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-tab]');
