@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: listen-together
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # Rooms live in memory, so this must stay a single process / single instance.
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.1
+      # Optional YouTube Data API v3 key for more reliable search (Render asks for it on setup).
+      - key: YOUTUBE_API_KEY
+        sync: false

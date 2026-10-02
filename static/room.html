@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0d17">
+  <title>Room · Listen Together</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="room-body">
+  <div class="overlay" id="joinOverlay">
+    <div class="modal">
+      <h2>Join the room</h2>
+      <p class="muted">Pick a name so others know who's here.</p>
+      <form id="nameForm">
+        <input type="text" id="nameInput" maxlength="24" placeholder="Your name" autocomplete="off" required>
+        <button class="primary" type="submit">Let's listen 🎶</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="room" id="room" data-tab="search">
+    <header class="top">
+      <a class="brand" href="/">Listen Together</a>
+      <span class="room-code" id="roomCode"></span>
+      <button id="copyLink" title="Copy invite link">🔗 <span class="label">Copy invite link</span></button>
+      <span class="spacer"></span>
+      <span class="conn muted" id="conn"><span class="label">Connecting…</span></span>
+    </header>
+
+    <section class="stage">
+      <div class="player-wrap">
+        <div id="player"></div>
+        <div class="player-shield" id="shield" title="Play / pause for everyone"></div>
+        <div class="empty-player" id="emptyPlayer">
+          <div>
+            <div class="note">🎵</div>
+            <div><strong>Nothing playing yet</strong></div>
+            <div class="muted">Search for a song or paste a YouTube link.</div>
+          </div>
+        </div>
+        <div class="unmute-banner" id="unmuteBanner" hidden>
+          <button class="primary" id="unmuteBtn">🔊 Tap to join the music</button>
+        </div>
+        <div class="reactions-layer" id="reactions"></div>
+      </div>
+
+      <div class="panel now-playing">
+        <div class="np-text">
+          <div class="np-title" id="npTitle">—</div>
+          <div class="np-sub muted" id="npSub"></div>
+        </div>
+        <div class="controls">
+          <button class="primary" id="playBtn" title="Play / pause for everyone">▶</button>
+          <span class="time" id="time">0:00 / 0:00</span>
+          <input type="range" id="seek" min="0" max="100" value="0" step="0.1" title="Seek for everyone">
+          <button class="icon" id="skipBtn" title="Skip to next">⏭</button>
+          <button class="icon" id="muteBtn" title="Mute (just you)">🔊</button>
+          <input type="range" class="volume" id="volume" min="0" max="100" value="80" title="Volume (just you)">
+        </div>
+        <div class="reaction-bar" id="reactionBar"></div>
+      </div>
+    </section>
+
+    <nav class="tabs" id="tabs">
+      <button data-tab="search">🔍 Search</button>
+      <button data-tab="queue">📃 Queue <span class="badge" id="queueBadge" hidden></span></button>
+      <button data-tab="chat">💬 Chat <span class="badge" id="chatBadge" hidden></span></button>
+    </nav>
+
+    <section class="panel pane pane-search" id="searchPane">
+      <h3 class="pane-title">Search YouTube</h3>
+      <form class="search-form" id="searchForm">
+        <input type="search" id="searchInput" placeholder="Search songs or paste a link…" autocomplete="off" enterkeyhint="search">
+        <button type="submit" class="primary" title="Search">🔍</button>
+      </form>
+      <div class="search-status muted" id="searchStatus">Find a song and hit ▶ to play it now, or + to add it to the queue.</div>
+      <ul class="results" id="results"></ul>
+    </section>
+
+    <section class="panel pane pane-queue queue" id="queuePane">
+      <h3 class="pane-title">Up next</h3>
+      <ol id="queueList"></ol>
+      <div class="muted" id="queueEmpty">Queue is empty. Add songs from search and they'll play in order.</div>
+    </section>
+
+    <aside class="panel pane pane-chat chat" id="chatPane">
+      <div class="chat-head">
+        <h3 class="pane-title">In the room · <span id="userCount">0</span></h3>
+        <div class="users" id="users"></div>
+      </div>
+      <div class="messages" id="messages"></div>
+      <form class="chat-input" id="chatForm">
+        <div class="emoji-picker" id="emojiPicker" hidden>
+          <div class="emoji-tabs" id="emojiTabs"></div>
+          <div class="emoji-grid" id="emojiGrid"></div>
+        </div>
+        <button type="button" class="icon" id="emojiBtn" title="Emoji">😊</button>
+        <input type="text" id="chatInput" maxlength="500" placeholder="Say something…" autocomplete="off" enterkeyhint="send">
+        <button type="submit" class="primary">Send</button>
+      </form>
+    </aside>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="/static/room.js"></script>
+</body>
+</html>

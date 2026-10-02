@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Listen Together</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="landing">
+    <div class="landing-card">
+      <h1 class="brand">Listen Together</h1>
+      <p class="muted">Create a room, share the link, paste a YouTube link — everyone hears the same song at the same moment. Chat and react along the way.</p>
+
+      <button class="primary big" onclick="location.href='/new'">🎧 Create a room</button>
+
+      <div class="divider">or join an existing one</div>
+
+      <form class="join-row" id="joinForm">
+        <input type="text" id="code" placeholder="Room code or link" autocomplete="off" required>
+        <button type="submit">Join</button>
+      </form>
+    </div>
+  </main>
+  <script>
+    document.getElementById('joinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const raw = document.getElementById('code').value.trim();
+      const code = (raw.match(/\/r\/([^/?#]+)/) || [null, raw])[1];
+      if (code) location.href = '/r/' + encodeURIComponent(code.toLowerCase());
+    });
+  </script>
+</body>
+</html>
